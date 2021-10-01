@@ -62,6 +62,11 @@ flutter:
         - asset: lib/ui/fonts/LeagueSpartan-Regular.ttf
         - asset: lib/ui/fonts/LeagueSpartan-Bold.ttf
           weight: 700
+    - family: Inter
+      fonts:
+        - asset: lib/ui/fonts/Inter-Regular.ttf
+        - asset: lib/ui/fonts/Inter-Bold.ttf
+          weight: 700
   assets:
      - assets/images/
 
