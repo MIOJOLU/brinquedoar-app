@@ -1,5 +1,6 @@
 import 'package:brinquedoar_flutter/ui/pages/home.dart';
 import 'package:brinquedoar_flutter/ui/pages/login.dart';
+import 'package:brinquedoar_flutter/ui/pages/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -149,7 +150,8 @@ class _cadastro extends State<cadastro> {
                             const SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () {
-                                // Respond to button press
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => Feed()));
                               },
                               child: const Text('Cadastrar',
                                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
