@@ -75,7 +75,7 @@ img() {
 
 content() {
   const data = ''' 
-  BrinqueDOAR é um prpjeto realizado por um grupo
+  BrinqueDOAR é um projeto realizado por um grupo
   de jovens apaixonados pela tecnologia e ansiosos
   para mudar o mundo, mesmo que seja de pouquinho
   em poquinho. É um aplicativo que cada um pode 
