@@ -1,29 +1,28 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-
-void main(){
-  runApp(runFeed());
-}
-
-class runFeed extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Inter'),
-        home: Feed()
-    );
-  }
-
-}
+//
+// class runFeed extends StatelessWidget {
+//   const runFeed({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         theme: ThemeData(fontFamily: 'Inter'),
+//         home: Feed()
+//     );
+//   }
+// }
 
 class Feed extends StatefulWidget {
+  const Feed({Key? key}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState () => test();
+  State<StatefulWidget> createState () => FeedState();
 }
 
-class test extends State<Feed> {
+class FeedState extends State<Feed> {
   var currentSection = 0;
 
   @override

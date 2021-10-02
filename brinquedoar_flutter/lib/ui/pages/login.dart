@@ -1,5 +1,6 @@
 import 'package:brinquedoar_flutter/ui/pages/home.dart';
 import 'package:brinquedoar_flutter/ui/pages/cadastro.dart';
+import 'package:brinquedoar_flutter/ui/pages/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -87,7 +88,7 @@ class _login extends State<login> {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
-                      // Respond to button press
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Feed()));
                     },
                     child: const Text('Login',
                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
