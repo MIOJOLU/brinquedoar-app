@@ -1,4 +1,6 @@
 import 'package:brinquedoar_flutter/ui/pages/sobre.dart';
+import 'package:brinquedoar_flutter/ui/pages/login.dart';
+import 'package:brinquedoar_flutter/ui/pages/cadastro.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -10,6 +12,11 @@ class Home extends StatelessWidget {
 }
 
 class HomeNavigation extends StatelessWidget {
+  final styleBtn = ElevatedButton.styleFrom(
+      primary: const Color.fromRGBO(81, 181, 159, 1),
+      shadowColor: const Color(0x00000000),
+      fixedSize: const Size(131, 42),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +44,33 @@ class HomeNavigation extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Sobre()));
                 },
               ),
-              btn()
+              Container(
+                padding: const EdgeInsets.only(top: 40),
+                width: 288,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => login()));
+                    },
+                      child: const Text('Login',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                      style: styleBtn,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => cadastro()));
+                      },
+                      child: const Text('Cadastrar',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                      style: styleBtn,
+                    )
+                  ],
+                ),
+              )
             ],
           )
         ],
@@ -79,31 +112,3 @@ content() {
   ));
 }
 
-btn() {
-  final styleBtn = ElevatedButton.styleFrom(
-      primary: const Color.fromRGBO(81, 181, 159, 1),
-      shadowColor: const Color(0x00000000),
-      fixedSize: const Size(131, 42),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)));
-  return (Container(
-    padding: const EdgeInsets.only(top: 40),
-    width: 288,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton(
-          onPressed: () => {},
-          child: const Text('Login',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-          style: styleBtn,
-        ),
-        ElevatedButton(
-          onPressed: () => {},
-          child: const Text('Cadastrar',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-          style: styleBtn,
-        )
-      ],
-    ),
-  ));
-}
