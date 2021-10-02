@@ -19,7 +19,7 @@ class AboutContent extends StatelessWidget {
       appBar: AppBar(
           backgroundColor: const Color.fromRGBO(255, 255, 255, 0.9),
           shadowColor: const Color.fromRGBO(255, 255, 255, 1),
-          toolbarHeight: 35,
+          toolbarHeight: 50,
           leading: TextButton(
             onPressed: () {
               Navigator.push(
