@@ -3,6 +3,8 @@ import 'package:brinquedoar_flutter/ui/pages/login.dart';
 import 'package:brinquedoar_flutter/ui/pages/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class cadastro extends StatefulWidget{
   @override
@@ -23,17 +25,46 @@ logo() {
 
 class _cadastro extends State<cadastro> {
   bool isChecked = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passConfirmController = TextEditingController();
+
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
       MaterialState.hovered,
       MaterialState.focused,
     };
+
     if (states.any(interactiveStates.contains)) {
       return const Color.fromRGBO(81, 181, 159, 1);
     }
     return const Color.fromRGBO(81, 181, 159, 1);
   }
+
+  _recuperarDB() async{
+    final caminhoBD = await getDatabasesPath();
+    final localBD = join(caminhoBD, "/data/db.db");
+    var returnData = await openDatabase(localBD, version: 1);
+
+    print("Ta em casa? " + returnData.isOpen.toString());
+
+    return returnData;
+  }
+
+  _cadastrarUsuario(String nome, String email, String password, String confirmPassword, bool isONG) async {
+    if(password == confirmPassword){
+      Map<String, dynamic> userData = {
+        "nome": nome,
+        "email": email,
+        "password": password,
+        "confirmPassword": confirmPassword,
+        "isONG": isONG
+      };
+    }
+  }
+
   final styleeBtn = ElevatedButton.styleFrom(
       primary: const Color.fromRGBO(81, 181, 159, 1),
       shadowColor: const Color(0x00000000),
@@ -69,7 +100,6 @@ class _cadastro extends State<cadastro> {
                     child: Row(
                       children: [
                         Checkbox(
-
                           checkColor: Colors.white,
                           fillColor: MaterialStateProperty.resolveWith(getColor),
                           value: isChecked,
@@ -91,6 +121,7 @@ class _cadastro extends State<cadastro> {
 
 
                             TextFormField(
+                              controller: _nameController,
                               keyboardType: TextInputType.text,
                               decoration: const InputDecoration(
                                 labelText: "  Nome completo",
@@ -105,6 +136,7 @@ class _cadastro extends State<cadastro> {
                             ),
                             const SizedBox(height: 15),
                             TextFormField(
+                              controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 labelText: "  E-mail",
@@ -118,9 +150,10 @@ class _cadastro extends State<cadastro> {
                               ),
                             ),
                             const SizedBox(height: 15),
-                            const TextField(
+                            TextField(
+                              controller: _passwordController,
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: "  Senha",
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Color.fromRGBO(81, 181, 159, 1),),
@@ -133,9 +166,10 @@ class _cadastro extends State<cadastro> {
                               obscureText: true,
                             ),
                             const SizedBox(height: 15),
-                            const TextField(
+                            TextField(
+                              controller: _passConfirmController,
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: "  Confirmar senha",
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Color.fromRGBO(81, 181, 159, 1),),
@@ -150,6 +184,7 @@ class _cadastro extends State<cadastro> {
                             const SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () {
+                                _cadastrarUsuario(_nameController.text, _emailController.text, _passwordController.text, _passConfirmController.text, isChecked);
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) => Feed()));
                               },

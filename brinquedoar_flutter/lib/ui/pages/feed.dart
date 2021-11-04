@@ -82,7 +82,7 @@ class FeedState extends State<Feed> {
                           ),
                           const SizedBox(width: 15),
                           GestureDetector(
-                              child: Text("perfis",
+                              child: Text("perfil",
                                   style: TextStyle(color: getSectionColor(currentSection, 2), fontWeight: FontWeight.bold)),
                               onTap: () => {
                                 setState(() {
