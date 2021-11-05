@@ -23,58 +23,13 @@ class Feed extends StatefulWidget {
   State<StatefulWidget> createState () => FeedState();
 }
 
-fotoPerfil() {
-  return Container(
-    padding: const EdgeInsets.only(bottom: 20, top: 10),
-    child: Center(
-        child: Image.asset(
-          'assets/images/fotoPerfil.png',
-          width: 135,
-
-        )),
-    decoration: const BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    ),
-  );
-}
-
-infoUsuario() async{
-
-
-  return FutureBuilder<String>(
-      future: callAsyncFetch(),
-      builder: (context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data);
-        } else {
-          return CircularProgressIndicator();
-        }
-      }
-  );
-  return Container(
-      child:
-      Column(
-          children:[
-            Text(nome.toString()),
-
-          ]
-      )
-  );
-}
-
-callAsyncFetch() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  String? nome = await prefs.getString("nome");
-  String? email = await prefs.getString("email");
-  int? id = await prefs.getInt("id");
-  int? isONG = await prefs.getInt("isONG");
-
-
-}
 
 class FeedState extends State<Feed> {
   var currentSection = 0;
+  String? nome = "";
+  String? email = "";
+  int? id = -1;
+  int? isONG = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -197,10 +152,45 @@ class FeedState extends State<Feed> {
         children:[
           fotoPerfil(),
           infoUsuario(),
-
         ]
       )
     );
+  }
+
+  fotoPerfil() {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 20, top: 10),
+      child: Center(
+          child: Image.asset(
+            'assets/images/fotoPerfil.png',
+            width: 135,
+
+          )),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      ),
+    );
+  }
+
+  infoUsuario() {
+    getUserData();
+
+    return Column(
+      children:[
+        Text("Olá, ${nome!}!"),
+      ]
+    );
+  }
+
+  getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      nome = prefs.getString("nome");
+      email = prefs.getString("email");
+      id = prefs.getInt("id");
+      isONG = prefs.getInt("isONG");
+    });
   }
 
 
