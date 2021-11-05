@@ -205,7 +205,7 @@ class FeedState extends State<Feed> {
     return Colors.black;
   }
 
-  Future<List> renderPedidos() async {
+  void renderPedidos() async {
     final prefs = await SharedPreferences.getInstance();
 
     int? id = prefs.getInt("id");
@@ -213,7 +213,7 @@ class FeedState extends State<Feed> {
     // Remover estatico
     List query = brinquedoarRepository.getPedidosById(31);
 
-    return query;
+    //return query;
   }
 
 
