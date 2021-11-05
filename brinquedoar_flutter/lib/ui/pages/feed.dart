@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //
 // class runFeed extends StatelessWidget {
 //   const runFeed({Key? key}) : super(key: key);
@@ -40,6 +42,8 @@ fotoPerfil() {
 class FeedState extends State<Feed> {
   var currentSection = 0;
 
+  final dao brinquedoarRepository = dao();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +53,7 @@ class FeedState extends State<Feed> {
     );
   }
 
-  Widget corpoPagina(){
+  Widget corpoPagina() {
 
     return Column(
       children: [
@@ -136,11 +140,11 @@ class FeedState extends State<Feed> {
     );
   }
 
-  Widget conteudo(int currentSection){
+  Widget conteudo(int currentSection) {
     if(currentSection == 0) // Luiza
       return doacao();
     if(currentSection == 1) // Diogo
-      return pedido();
+      return feedPedidos();
     else
       return perfil();
 
@@ -173,6 +177,62 @@ class FeedState extends State<Feed> {
     }
 
     return Colors.black;
+  }
+
+  Future<List> renderPedidos() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    int? id = prefs.getInt("id");
+
+    // Remover estatico
+    List query = brinquedoarRepository.getPedidosById(31);
+
+    return query;
+  }
+
+
+  Widget feedPedidos() {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.smart_toy),
+            title: const Text('Pedido 1'),
+            subtitle: Text(
+              'Pedido a caminho',
+              style: TextStyle(color: Colors.black.withOpacity(0.6)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Greyhound divisively hello coldly wonderfully marginally far upon excluding.',
+              style: TextStyle(color: Colors.black.withOpacity(0.6)),
+            ),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.start,
+            children: [
+              FlatButton(
+                textColor: const Color(0xFF6200EE),
+                onPressed: () {
+                  // Perform some action
+                },
+                child: const Text('ACTION 1'),
+              ),
+              FlatButton(
+                textColor: const Color(0xFF6200EE),
+                onPressed: () {
+                  // Perform some action
+                },
+                child: const Text('ACTION 2'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
