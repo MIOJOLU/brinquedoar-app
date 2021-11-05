@@ -1,4 +1,3 @@
-import 'package:brinquedoar_flutter/model/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -8,7 +7,7 @@ class dao {
     final localBD = join(caminhoBD, "db.db");
 
     var database = await openDatabase(localBD, version: 1, onCreate: (db, dbVersaoRecente){
-        String sql = "CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR, bio VARCHAR, email VARCHAR, senha VARCHAR, isONG INTEGER)";
+        String sql = "CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, nome VARCHAR, email VARCHAR, senha VARCHAR, isONG INTEGER)";
         print("TABELA CRIADA " + localBD.toString());
         db.execute(sql);
       }
@@ -34,7 +33,11 @@ class dao {
         where: "email = ?",
         whereArgs: [email]);
 
-    return User.fromQuery(query[0]);
+    for(var sla in query){
+      print("email: " + sla["email"] + " senha: " + sla["senha"]);
+    }
+
+    return query[0];
   }
 
 
