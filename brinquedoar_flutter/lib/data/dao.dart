@@ -1,3 +1,4 @@
+import 'package:brinquedoar_flutter/model/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -77,11 +78,7 @@ class dao {
         where: "email = ?",
         whereArgs: [email]);
 
-    for(var sla in query){
-      print("email: " + sla["email"] + " senha: " + sla["senha"]);
-    }
-
-    return query[0];
+    return User.fromQuery(query[0]);
   }
 
 
