@@ -30,7 +30,7 @@ class FeedState extends State<Feed> {
   String? nome = "";
   String? email = "";
   int? id = -1;
-  int? isONG = -1;
+  bool? isONG = false;
 
   final dao brinquedoarRepository = dao();
 
@@ -167,7 +167,6 @@ class FeedState extends State<Feed> {
           child: Image.asset(
             'assets/images/fotoPerfil.png',
             width: 135,
-
           )),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -192,7 +191,7 @@ class FeedState extends State<Feed> {
       nome = prefs.getString("nome");
       email = prefs.getString("email");
       id = prefs.getInt("id");
-      isONG = prefs.getInt("isONG");
+      isONG = prefs.getBool("isONG") == 1? true : false;
     });
   }
 
