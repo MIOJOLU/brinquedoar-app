@@ -1,10 +1,10 @@
+import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:brinquedoar_flutter/ui/pages/home.dart';
 import 'package:brinquedoar_flutter/ui/pages/login.dart';
 import 'package:brinquedoar_flutter/ui/pages/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class cadastro extends StatefulWidget{
   @override
@@ -30,6 +30,8 @@ class _cadastro extends State<cadastro> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passConfirmController = TextEditingController();
 
+  final dao brinquedoarRepository = dao();
+
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
@@ -43,26 +45,33 @@ class _cadastro extends State<cadastro> {
     return const Color.fromRGBO(81, 181, 159, 1);
   }
 
-  _recuperarDB() async{
-    final caminhoBD = await getDatabasesPath();
-    final localBD = join(caminhoBD, "/data/db.db");
-    var returnData = await openDatabase(localBD, version: 1);
-
-    print("Ta em casa? " + returnData.isOpen.toString());
-
-    return returnData;
-  }
-
   _cadastrarUsuario(String nome, String email, String password, String confirmPassword, bool isONG) async {
     if(password == confirmPassword){
       Map<String, dynamic> userData = {
         "nome": nome,
         "email": email,
-        "password": password,
-        "confirmPassword": confirmPassword,
-        "isONG": isONG
+        "senha": password,
+        "isONG": isONG == true? 1 : 0
       };
+
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString("nome", nome);
+      await prefs.setString("email", email);
+      await prefs.setInt("id", await brinquedoarRepository.insertUser(userData));
+      await prefs.setInt("isONG", isONG == true? 1 : 0);
+
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Feed()));
     }
+    else {
+      _limparDados();
+    }
+  }
+
+  _limparDados(){
+    _passwordController.text = "";
+    _passConfirmController.text = "";
   }
 
   final styleeBtn = ElevatedButton.styleFrom(
@@ -185,8 +194,6 @@ class _cadastro extends State<cadastro> {
                             ElevatedButton(
                               onPressed: () {
                                 _cadastrarUsuario(_nameController.text, _emailController.text, _passwordController.text, _passConfirmController.text, isChecked);
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => Feed()));
                               },
                               child: const Text('Cadastrar',
                                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),

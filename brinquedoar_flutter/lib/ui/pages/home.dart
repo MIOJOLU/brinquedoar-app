@@ -2,6 +2,8 @@ import 'package:brinquedoar_flutter/ui/pages/sobre.dart';
 import 'package:brinquedoar_flutter/ui/pages/login.dart';
 import 'package:brinquedoar_flutter/ui/pages/cadastro.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class Home extends StatelessWidget {
   @override
