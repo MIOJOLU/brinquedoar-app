@@ -22,6 +22,21 @@ class Feed extends StatefulWidget {
   State<StatefulWidget> createState () => FeedState();
 }
 
+fotoPerfil() {
+  return Container(
+    padding: const EdgeInsets.only(bottom: 20, top: 35),
+    child: Center(
+        child: Image.asset(
+          'assets/images/perfil.png',
+          width: 110,
+
+        )),
+    decoration: const BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    ),
+  );
+}
+
 class FeedState extends State<Feed> {
   var currentSection = 0;
 
@@ -29,9 +44,19 @@ class FeedState extends State<Feed> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-        feedHeader(),
+        corpoPagina(),
       backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
     );
+  }
+
+  Widget corpoPagina(){
+
+    return Column(
+      children: [
+        feedHeader(),
+        conteudo(currentSection),
+      ]
+      );
   }
 
   Widget feedHeader() {
@@ -110,6 +135,37 @@ class FeedState extends State<Feed> {
       padding: const EdgeInsets.only(top: 30),
     );
   }
+
+  Widget conteudo(int currentSection){
+    if(currentSection == 0) // Luiza
+      return doacao();
+    if(currentSection == 1) // Diogo
+      return pedido();
+    else
+      return perfil();
+
+  }
+
+  Widget doacao(){
+    return Container();
+  }
+
+  Widget pedido(){
+    return Container();
+  }
+
+  Widget perfil(){
+    return Container(
+      child:
+      Column(
+        children:[
+          fotoPerfil(),
+        ]
+      )
+    );
+  }
+
+
 
   Color getSectionColor(int currentSection, sectionID){
     if(currentSection == sectionID) {

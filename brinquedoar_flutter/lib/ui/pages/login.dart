@@ -24,6 +24,8 @@ logo() {
 }
 
 class _login extends State<login> {
+  bool erroSenha = false;
+
   final styleeBtn = ElevatedButton.styleFrom(
       primary: const Color.fromRGBO(81, 181, 159, 1),
       shadowColor: const Color(0x00000000),
@@ -49,7 +51,9 @@ class _login extends State<login> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Feed()));
     }
     else{
-      print("fail");
+      setState(() {
+        erroSenha = true;
+      });
     }
   }
 
@@ -81,6 +85,7 @@ class _login extends State<login> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children:  [
+                  //mostrarErro(),
                   //const SizedBox(height: 30),
                   TextFormField(
                     controller: _emailController,
@@ -142,6 +147,55 @@ class _login extends State<login> {
         )
       )
     );
+  }
+
+  Widget mostrarErro() {
+    if(erroSenha) {
+      return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0)
+          ),
+          child: Stack(
+            overflow: Overflow.visible,
+            alignment: Alignment.topCenter,
+            children: [
+              Container(
+                height: 200,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 70, 10, 10),
+                  child: Column(
+                    children: [
+                      Text('Warning !!!', style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),),
+                      SizedBox(height: 5,),
+                      Text('You can not access this file',
+                        style: TextStyle(fontSize: 20),),
+                      SizedBox(height: 20,),
+                      RaisedButton(onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                        color: Colors.redAccent,
+                        child: Text(
+                          'Okay', style: TextStyle(color: Colors.white),),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                  top: -60,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.redAccent,
+                    radius: 60,
+                    child: Icon(
+                      Icons.assistant_photo, color: Colors.white, size: 50,),
+                  )
+              ),
+            ],
+          )
+      );
+    }else
+      return Container();
   }
 
 }
