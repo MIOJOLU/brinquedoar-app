@@ -26,17 +26,52 @@ class Feed extends StatefulWidget {
 
 fotoPerfil() {
   return Container(
-    padding: const EdgeInsets.only(bottom: 20, top: 35),
+    padding: const EdgeInsets.only(bottom: 20, top: 10),
     child: Center(
         child: Image.asset(
-          'assets/images/perfil.png',
-          width: 110,
+          'assets/images/fotoPerfil.png',
+          width: 135,
 
         )),
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(8.0)),
     ),
   );
+}
+
+infoUsuario() async{
+
+
+  return FutureBuilder<String>(
+      future: callAsyncFetch(),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data);
+        } else {
+          return CircularProgressIndicator();
+        }
+      }
+  );
+  return Container(
+      child:
+      Column(
+          children:[
+            Text(nome.toString()),
+
+          ]
+      )
+  );
+}
+
+callAsyncFetch() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  String? nome = await prefs.getString("nome");
+  String? email = await prefs.getString("email");
+  int? id = await prefs.getInt("id");
+  int? isONG = await prefs.getInt("isONG");
+
+
 }
 
 class FeedState extends State<Feed> {
@@ -164,6 +199,8 @@ class FeedState extends State<Feed> {
       Column(
         children:[
           fotoPerfil(),
+          infoUsuario(),
+
         ]
       )
     );
