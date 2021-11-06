@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:brinquedoar_flutter/data/dao.dart';
+import 'package:brinquedoar_flutter/model/docao.dart';
+import 'package:brinquedoar_flutter/ui/pages/add_donation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //
@@ -18,9 +21,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Feed extends StatefulWidget {
   const Feed({Key? key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState () => FeedState();
+}
+late List<doacao> doacoes;
+bool isLoading = false;
+
+Future refreshDoacoes() async {
+    isLoading = true;
+    final prefs = await SharedPreferences.getInstance();
+    int? user =  prefs.getInt("id");
+    doacoes =  await dao.getAllDonations(user!);
+    isLoading = false;
 }
 
 
@@ -30,6 +42,7 @@ class FeedState extends State<Feed> {
   String? email = "";
   int? id = -1;
   bool? isONG = false;
+  final dao Dao = dao();
 
   @override
   Widget build(BuildContext context) {
@@ -132,13 +145,25 @@ class FeedState extends State<Feed> {
       return doacao();
     if(currentSection == 1) // Diogo
       return pedido();
-    else
+    else {
       return perfil();
+    }
 
   }
 
   Widget doacao(){
-    return Container();
+    return Scaffold(
+      body: Center(
+          // child: isLoading
+          //     ? CircularProgressIndicator()
+          //     : doacao.
+          //         ? Text(
+          //             'No Notes',
+          //             style: TextStyle(color: Colors.white, fontSize: 24),
+          //           )
+          //         : buildNotes(),
+        ),  
+    );
   }
 
   Widget pedido(){
@@ -152,6 +177,17 @@ class FeedState extends State<Feed> {
         children:[
           fotoPerfil(),
           infoUsuario(),
+          TextButton(
+                child: const Text('Inserir doação',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: Color.fromRGBO(81, 181, 159, 1))),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AdicionarDoacao()));
+                },
+              )
         ]
       )
     );
@@ -191,7 +227,6 @@ class FeedState extends State<Feed> {
       isONG = prefs.getBool("isONG") == 1? true : false;
     });
   }
-
 
 
   Color getSectionColor(int currentSection, sectionID){
