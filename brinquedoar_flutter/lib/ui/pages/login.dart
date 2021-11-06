@@ -38,7 +38,7 @@ class _login extends State<login> {
   final dao brinquedoarRepository = dao();
 
   void logarUsuario(String email, String password) async {
-    var user = await brinquedoarRepository.getUserByEmail(email);
+    var user = await dao.getUserByEmail(email);
 
     if(user["senha"] == password){
       final prefs = await SharedPreferences.getInstance();
