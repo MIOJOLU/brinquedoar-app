@@ -68,6 +68,12 @@ class dao {
     return await db.insert("user", userData);
   }
 
+  insertPdido(Map<String, dynamic> pedidoData) async {
+    Database db = await get_db();
+
+    return await db.insert("pedido", pedidoData);
+  }
+
   getUserByEmail(String email) async{
     Database db = await get_db();
 
