@@ -1,6 +1,6 @@
 import 'package:brinquedoar_flutter/model/user.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:brinquedoar_flutter/model/docao.dart';
+import 'package:brinquedoar_flutter/model/doacao.dart';
 import 'package:path/path.dart';
 
 class SqlTypes{
@@ -18,8 +18,10 @@ class dao {
       
     var database = await openDatabase(localBD, version: 1, onCreate: (db, dbVersaoRecente){ 
         var sql = '''
-        CREATE TABLE ${tablesName[0]} (id ${SqlTypes.idType}, nome ${SqlTypes.string}, email ${SqlTypes.string}, senha ${SqlTypes.string}, isONG INTEGER);      
+        CREATE TABLE ${tablesName[0]} (id ${SqlTypes.idType}, nome ${SqlTypes.string}, email ${SqlTypes.string}, senha ${SqlTypes.string}, isONG INTEGER, bio ${SqlTypes.string});      
           ''';
+
+        db.execute(sql);
 
         sql = '''
         CREATE TABLE ${tablesName[1]} (
@@ -36,7 +38,7 @@ class dao {
         ''';
         db.execute(sql);
       
-    await db.execute("CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
+      db.execute("CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
       }
     );
 
@@ -88,7 +90,8 @@ class dao {
     Database db = await get_db();
 
     return await db.insert("pedido", pedidoData);
-    
+  }
+  
   static close() async{
     Database db = await get_db();
     db.close();

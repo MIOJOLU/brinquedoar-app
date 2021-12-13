@@ -3,7 +3,7 @@
 import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:brinquedoar_flutter/ui/pages/feed.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:brinquedoar_flutter/model/docao.dart';
+import 'package:brinquedoar_flutter/model/doacao.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
