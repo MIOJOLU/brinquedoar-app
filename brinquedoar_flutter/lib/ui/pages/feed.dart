@@ -211,10 +211,15 @@ class FeedState extends State<Feed> {
     );
   }
 
+
   infoUsuario() {
     getUserData();
 
     return Column(children: [Text(nome!), Text(bio!)]);
+  }
+
+  List<Widget> showDoacoes(){
+    List<doacao> doacoesUser = brinquedoarRepository.getDoacoesByUserId(id);
   }
 
   getUserData() async {

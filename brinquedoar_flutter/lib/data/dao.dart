@@ -123,7 +123,7 @@ class dao {
 
   }
 
-  static getAllDonations(int user) async {
+  static getDonationsById(int user) async {
     Database db = await get_db();
     return await db.query(
       tablesName[1],
@@ -131,8 +131,7 @@ class dao {
       whereArgs: [user],
       columns: ["id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero"]
     );
-  } 
-
+  }
   // updateDonation(doacao newDonation) async {
   //   Database db = await get_db();
   //   return await db.rawUpdate(
