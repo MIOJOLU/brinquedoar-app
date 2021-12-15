@@ -31,10 +31,11 @@ late List<doacao> doacoes;
 bool isLoading = false;
 
 Future refreshDoacoes() async {
+  dao brinquedoarRepository = dao();
   isLoading = true;
   final prefs = await SharedPreferences.getInstance();
   int? user = prefs.getInt("id");
-  doacoes = await dao.getAllDonations(user!);
+  doacoes = await brinquedoarRepository.getDonationsById(user!);
   isLoading = false;
 }
 
@@ -46,9 +47,22 @@ class FeedState extends State<Feed> {
   int? id = -1;
   bool? isONG = false;
 
-  final dao Dao = dao();
-
   final dao brinquedoarRepository = dao();
+
+  late Future f;
+
+  @override
+  void initState() {
+    super.initState();
+
+    f = getDonations();
+  }
+
+  getDonations() async {
+    await getUserData();
+
+    return await brinquedoarRepository.getDonationsById(id!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,29 +186,11 @@ class FeedState extends State<Feed> {
   }
 
   Widget perfil() {
-    return Container(
-        child: Column(children: [
+    return Column(children: [
       fotoPerfil(),
       infoUsuario(),
-      Text("Minhas Doacoes"),
-      Row(
-        children: [
-          showDoacoes(),
-          
-        ],
-      ),
-      TextButton(
-        child: const Text('Inserir doação',
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: Color.fromRGBO(81, 181, 159, 1))),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AdicionarDoacao()));
-        },
-      )
-    ]));
+      abaDoacoes(),
+    ]);
   }
 
   fotoPerfil() {
@@ -211,15 +207,86 @@ class FeedState extends State<Feed> {
     );
   }
 
-
   infoUsuario() {
     getUserData();
 
     return Column(children: [Text(nome!), Text(bio!)]);
   }
 
-  List<Widget> showDoacoes(){
-    List<doacao> doacoesUser = brinquedoarRepository.getDoacoesByUserId(id);
+  abaDoacoes() {
+    return Column(children: [
+      Padding(
+          padding:
+              const EdgeInsets.only(left: 50, right: 50, top: 4, bottom: 0),
+          child: Row(children: [
+            const Text("Minhas Doações",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            adicionarDoacaoBotao()
+          ])),
+      Padding(
+          padding:
+              const EdgeInsets.only(left: 50, right: 50, top: 0, bottom: 10),
+          child: Container(
+            height: 70,
+            child: ListView(
+                scrollDirection: Axis.horizontal, children: [showDoacoes()]),
+          ))
+    ]);
+  }
+
+  adicionarDoacaoBotao() {
+    return TextButton(
+      style: TextButton.styleFrom(padding: const EdgeInsets.all(0)),
+      child: const Text('+',
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Color.fromRGBO(81, 181, 159, 1))),
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => AdicionarDoacao()));
+
+        setState(() {});
+      },
+    );
+  }
+
+  FutureBuilder showDoacoes() {
+    return FutureBuilder(
+        future: f,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+            List<Widget> widgets = [];
+
+            List doacoes =
+                snapshot.data.map((c) => doacao.fromQuery(c)).toList();
+
+            for (var entry in doacoes) {
+              widgets.add(doacaoBox(entry));
+              widgets.add(SizedBox(width: 15));
+            }
+
+            return Row(children: widgets);
+          } else if (snapshot.hasError) {
+            print("ERROR");
+          }
+          else {
+            return const CircularProgressIndicator();
+          }
+          return const Text("");
+        });
+  }
+
+  Widget doacaoBox(doacao data) {
+    return Container(
+      width: 70,
+      height: 70,
+      child: Center(
+          child: Text(data.titulo.characters.first.toUpperCase(),
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+      color: Colors.grey,
+    );
   }
 
   getUserData() async {

@@ -11,15 +11,15 @@ class TableDoacao {
 }
 
 class doacao{
-  final String titulo;
-  final String descricao;
-  final String enderecoRua;
-  final String enderecoBairro;
-  final int numero;
-  final String estado;
-  final int user;
+  String titulo = "";
+  String descricao = "";
+  String enderecoRua = "";
+  String enderecoBairro = "";
+  int numero = -1;
+  String estado = "";
+  int user = -1;
 
-  const doacao({
+  doacao({
     required this.user,
     required this.titulo,
     required this.descricao,
@@ -28,6 +28,18 @@ class doacao{
     required this.estado,
     required this.numero
   });
+
+  //doacao(this.user, this.titulo, this.descricao, this.enderecoRua, this.enderecoBairro, this.estado, this.numero);
+
+  doacao.fromQuery(var query){
+    titulo = query["titulo"];
+    descricao = query["descricao"];
+    enderecoRua = query["enderecoRua"];
+    enderecoBairro = query["enderecoBairro"];
+    numero = int.parse(query["numero"]);
+    estado = query["estado"];
+    user = int.parse(query["user"].toString());
+  }
 
   Map<String, Object> toJSON() => {
       TableDoacao.user: user,

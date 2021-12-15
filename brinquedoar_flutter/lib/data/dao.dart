@@ -42,7 +42,7 @@ class dao {
       }
     );
 
-    print("Is open: " + database.isOpen.toString());
+    //print("Is open: " + database.isOpen.toString());
 
     return database;
   }
@@ -123,14 +123,20 @@ class dao {
 
   }
 
-  static getDonationsById(int user) async {
+  getDonationsById(int user) async {
+    //print("sup");
+
     Database db = await get_db();
-    return await db.query(
+    var result = await db.query(
       tablesName[1],
       where: "user = ?", 
       whereArgs: [user],
-      columns: ["id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero"]
+      columns: ["_id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero", "user"]
     );
+    //result.forEach((row) => print(row));
+
+
+    return result;
   }
   // updateDonation(doacao newDonation) async {
   //   Database db = await get_db();
