@@ -2,7 +2,7 @@ import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:brinquedoar_flutter/model/user.dart';
 import 'package:brinquedoar_flutter/ui/pages/home.dart';
 import 'package:brinquedoar_flutter/ui/pages/login.dart';
-import 'package:brinquedoar_flutter/ui/pages/feed.dart';
+import 'package:brinquedoar_flutter/ui/pages/Feed/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

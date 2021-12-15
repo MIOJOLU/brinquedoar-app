@@ -1,7 +1,8 @@
 // ignore_for_file: camel_case_types
 
 import 'package:brinquedoar_flutter/data/dao.dart';
-import 'package:brinquedoar_flutter/ui/pages/feed.dart';
+import 'package:brinquedoar_flutter/service/doacao.service.dart';
+import 'package:brinquedoar_flutter/ui/pages/Feed/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:brinquedoar_flutter/model/doacao.dart';
 import 'package:flutter/material.dart';
@@ -210,7 +211,7 @@ class _donationState extends State<AdicionarDoacao> {
         enderecoBairro: bairro,
         estado: estado,
         numero: numero);
-    int id = await dao.insertDonations(donation);
+    int id = await DoacaoService.insertDonations(donation);
     print(id);
   }
 

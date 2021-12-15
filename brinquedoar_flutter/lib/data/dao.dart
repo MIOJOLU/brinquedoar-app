@@ -3,27 +3,29 @@ import 'package:sqflite/sqflite.dart';
 import 'package:brinquedoar_flutter/model/doacao.dart';
 import 'package:path/path.dart';
 
-class SqlTypes{
+class SqlTypes {
   static String idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
   static String string = 'VARCHAR NOT NULL';
 }
- const tablesName = ['user','donations'];
-class dao {
 
-  static get_db() async{
+const tablesName = ['user', 'donations'];
+
+class dao {
+  static get_db() async {
     final caminhoBD = await getDatabasesPath();
     final localBD = join(caminhoBD, "db.db");
 
     await deleteDatabase(caminhoBD);
-      
-    var database = await openDatabase(localBD, version: 1, onCreate: (db, dbVersaoRecente){ 
-        var sql = '''
+
+    var database = await openDatabase(localBD, version: 1,
+        onCreate: (db, dbVersaoRecente) {
+      var sql = '''
         CREATE TABLE ${tablesName[0]} (id ${SqlTypes.idType}, nome ${SqlTypes.string}, email ${SqlTypes.string}, senha ${SqlTypes.string}, isONG INTEGER, bio ${SqlTypes.string});      
           ''';
 
-        db.execute(sql);
+      db.execute(sql);
 
-        sql = '''
+      sql = '''
         CREATE TABLE ${tablesName[1]} (
             ${TableDoacao.id} ${SqlTypes.idType}, 
             ${TableDoacao.user} INTEGER,
@@ -36,13 +38,13 @@ class dao {
             FOREIGN KEY(user) REFERENCES ${tablesName[0]}(id)  
             );
         ''';
-        db.execute(sql);
-      
-      db.execute("CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
-      }
-    );
+      db.execute(sql);
 
-    //print("Is open: " + database.isOpen.toString());
+      db.execute(
+          "CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
+    });
+
+    print("Is open: " + database.isOpen.toString());
 
     return database;
   }
@@ -52,19 +54,19 @@ class dao {
     Database bd = await get_db();
 
     Map<String, dynamic> dadosUsuario = {
-      "nome" : 'Diogo',
-      "email" : 'diogo@hotmail.com',
-      "senha" : '2',
-      "isOng" : '0'
+      "nome": 'Diogo',
+      "email": 'diogo@hotmail.com',
+      "senha": '2',
+      "isOng": '0'
     };
 
     int id = await bd.insert("user", dadosUsuario);
     //print(id);
 
     Map<String, dynamic> pedidoUsuario = {
-      "id_user" : id,
-      "status" : 'Em Andamento',
-      "descricao" : 'Brinquedo'
+      "id_user": id,
+      "status": 'Em Andamento',
+      "descricao": 'Brinquedo'
     };
 
     int idPedido = await bd.insert("pedido", pedidoUsuario);
@@ -76,12 +78,10 @@ class dao {
     /// TODO: RETIRAR ESSA PARTE DE CODIGO E COLOCAR DINAMICO
     _salvarDados();
 
-    List query = await db.query(
-        "pedido",
+    List query = await db.query("pedido",
         columns: ["id", "status", "descricao"],
         where: "id_user = ?",
-        whereArgs: [idUser]
-    );
+        whereArgs: [idUser]);
 
     return query;
   }
@@ -91,8 +91,8 @@ class dao {
 
     return await db.insert("pedido", pedidoData);
   }
-  
-  static close() async{
+
+  static close() async {
     Database db = await get_db();
     db.close();
   }
@@ -104,11 +104,10 @@ class dao {
     return await db.insert(tablesName[0], userData);
   }
 
-  getUserByEmail(String email) async{
+  getUserByEmail(String email) async {
     Database db = await get_db();
 
-    List query = await db.query(
-        "User",
+    List query = await db.query("User",
         columns: ["id", "nome", "email", "senha", "isONG"],
         where: "email = ?",
         whereArgs: [email]);
@@ -117,32 +116,4 @@ class dao {
   }
 
   // Donatios
-  static insertDonations(doacao donation) async {
-    Database db = await get_db();
-    return await db.insert(tablesName[1], donation.toJSON()); 
-
-  }
-
-  getDonationsById(int user) async {
-    //print("sup");
-
-    Database db = await get_db();
-    var result = await db.query(
-      tablesName[1],
-      where: "user = ?", 
-      whereArgs: [user],
-      columns: ["_id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero", "user"]
-    );
-    //result.forEach((row) => print(row));
-
-
-    return result;
-  }
-  // updateDonation(doacao newDonation) async {
-  //   Database db = await get_db();
-  //   return await db.rawUpdate(
-  //   'UPDATE $tablesName[1] SET name = ?, value = ? WHERE id = ? ',
-  //   ['updated name', '9876', 'some name']);
-
-  // }
 }

@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:brinquedoar_flutter/model/doacao.dart';
+import 'package:brinquedoar_flutter/service/doacao.service.dart';
+import 'package:brinquedoar_flutter/ui/pages/Feed/Doacoes.dart';
 import 'package:brinquedoar_flutter/ui/pages/add_donation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,11 +33,10 @@ late List<doacao> doacoes;
 bool isLoading = false;
 
 Future refreshDoacoes() async {
-  dao brinquedoarRepository = dao();
   isLoading = true;
   final prefs = await SharedPreferences.getInstance();
   int? user = prefs.getInt("id");
-  doacoes = await brinquedoarRepository.getDonationsById(user!);
+  doacoes = await DoacaoService.getDonationsById(user!);
   isLoading = false;
 }
 
@@ -61,7 +62,7 @@ class FeedState extends State<Feed> {
   getDonations() async {
     await getUserData();
 
-    return await brinquedoarRepository.getDonationsById(id!);
+    return await DoacaoService.getDonationsById(id!);
   }
 
   @override
@@ -146,7 +147,7 @@ class FeedState extends State<Feed> {
         Padding(
             child: IntrinsicHeight(
               child: Row(
-                children: [],
+                children: const [],
               ),
             ),
             padding: const EdgeInsets.only(left: 50, right: 50))
@@ -157,28 +158,13 @@ class FeedState extends State<Feed> {
 
   Widget conteudo(int currentSection) {
     if (currentSection == 0) {
-      return sectionDoacao();
+      return sectionDoacao(isLoading);
     }
     if (currentSection == 1) {
       return feedPedidos();
     } else {
       return perfil();
     }
-  }
-
-  Widget sectionDoacao() {
-    return Scaffold(
-      body: Center(
-          // child: isLoading
-          //     ? CircularProgressIndicator()
-          //     : doacao.
-          //         ? Text(
-          //             'No Notes',
-          //             style: TextStyle(color: Colors.white, fontSize: 24),
-          //           )
-          //         : buildNotes(),
-          ),
-    );
   }
 
   Widget pedido() {
@@ -255,7 +241,8 @@ class FeedState extends State<Feed> {
     return FutureBuilder(
         future: f,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
             List<Widget> widgets = [];
 
             List doacoes =
@@ -269,8 +256,7 @@ class FeedState extends State<Feed> {
             return Row(children: widgets);
           } else if (snapshot.hasError) {
             print("ERROR");
-          }
-          else {
+          } else {
             return const CircularProgressIndicator();
           }
           return const Text("");
@@ -326,7 +312,7 @@ class FeedState extends State<Feed> {
       child: Column(
         children: [
           ListTile(
-            leading: Icon(Icons.smart_toy),
+            leading: const Icon(Icons.smart_toy),
             title: const Text('Pedido 1'),
             subtitle: Text(
               'Pedido a caminho',
