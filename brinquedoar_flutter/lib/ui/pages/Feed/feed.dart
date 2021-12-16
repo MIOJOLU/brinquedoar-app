@@ -5,22 +5,9 @@ import 'package:brinquedoar_flutter/model/doacao.dart';
 import 'package:brinquedoar_flutter/service/doacao.service.dart';
 import 'package:brinquedoar_flutter/ui/pages/Feed/Doacoes.dart';
 import 'package:brinquedoar_flutter/ui/pages/add_donation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-//
-// class runFeed extends StatelessWidget {
-//   const runFeed({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//         debugShowCheckedModeBanner: false,
-//         theme: ThemeData(fontFamily: 'Inter'),
-//         home: Feed()
-//     );
-//   }
-// }
 
 class Feed extends StatefulWidget {
   const Feed({Key? key}) : super(key: key);
@@ -28,7 +15,6 @@ class Feed extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => FeedState();
 }
-
 late List<doacao> doacoes;
 bool isLoading = false;
 
@@ -49,122 +35,140 @@ class FeedState extends State<Feed> {
   bool? isONG = false;
 
   final dao brinquedoarRepository = dao();
+  final DoacaoService ds = DoacaoService();
+  late Future donationRequest;
 
-  late Future f;
-
-  @override
-  void initState() {
-    super.initState();
-
-    f = getDonations();
+  FeedState() {
+    donationRequest = getDonations();
   }
 
   getDonations() async {
     await getUserData();
 
-    return await DoacaoService.getDonationsById(id!);
+    List returnList = await brinquedoarRepository.getDonationsById(id!);
+
+    return returnList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: corpoPagina(),
+      body: Container(
+        child: Column(
+          children: [
+            Padding(padding: EdgeInsets.all(25),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [Expanded(
+                  flex: 2,
+                  child: Image.asset('assets/images/logo-colorida.png', width: 120, height: 79),
+                )]
+            ),),
+            Row(
+              children:  [
+                Expanded(
+                  child: GestureDetector(
+                      child: Text(
+                        "doações",
+                        style: getTextStyle(currentSection, 0),
+                        textAlign: TextAlign.center,
+                      ),
+                      onTap: () => {
+                        setState(() {
+                          currentSection = 0;
+                        })
+                      }),
+                  flex: 1,
+
+                ),
+                Expanded(
+                    child: GestureDetector(
+                      child: Text("pedidos",
+                          style: getTextStyle(currentSection, 1),
+                          textAlign: TextAlign.center,
+                      ),
+
+                      onTap: () => {
+                        setState(() {
+                          currentSection = 1;
+                        })
+                      },
+                    ),
+                    flex: 1
+                ),
+                Expanded(
+                    child: GestureDetector(
+                        child: Text("perfil",
+                            style: getTextStyle(currentSection, 2),
+                            textAlign: TextAlign.center,
+                        ),
+                        onTap: () => {
+                          setState(() {
+                            currentSection = 2;
+                          })
+                        }),
+                    flex: 1
+                ),
+              ],
+            ),
+
+
+            Padding(
+              padding: EdgeInsets.all(20),
+              child:
+                Row(
+                  children: [
+                    Expanded(
+                        child: conteudo(currentSection)
+                    )
+                  ],
+                )
+              ,
+            )
+          ],
+        ),
+      ),
       backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
     );
   }
 
   Widget corpoPagina() {
     return Column(children: [
-      feedHeader(),
       conteudo(currentSection),
     ]);
   }
 
-  Widget feedHeader() {
-    return Container(
-      child: Center(
-          child: Column(children: [
-        Image.asset(
-          'assets/images/logo-colorida.png',
-          width: 160,
-          height: 119,
-        ),
-        Padding(
-            child: IntrinsicHeight(
-              child: Row(
-                children: [
-                  GestureDetector(
-                      child: Text(
-                        "doações",
-                        style: TextStyle(
-                            color: getSectionColor(currentSection, 0),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onTap: () => {
-                            setState(() {
-                              currentSection = 0;
-                            })
-                          }),
-                  const SizedBox(width: 15),
-                  const VerticalDivider(
-                    color: Colors.black,
-                    thickness: 1,
-                    width: 20,
-                  ),
-                  const SizedBox(width: 15),
-                  GestureDetector(
-                    child: Text("pedidos",
-                        style: TextStyle(
-                            color: getSectionColor(currentSection, 1),
-                            fontWeight: FontWeight.bold)),
-                    onTap: () => {
-                      setState(() {
-                        currentSection = 1;
-                      })
-                    },
-                  ),
-                  const SizedBox(width: 15),
-                  const VerticalDivider(
-                    color: Colors.black,
-                    thickness: 1,
-                    width: 20,
-                  ),
-                  const SizedBox(width: 15),
-                  GestureDetector(
-                      child: Text("perfil",
-                          style: TextStyle(
-                              color: getSectionColor(currentSection, 2),
-                              fontWeight: FontWeight.bold)),
-                      onTap: () => {
-                            setState(() {
-                              currentSection = 2;
-                            })
-                          }),
-                ],
-              ),
-            ),
-            padding: const EdgeInsets.only(left: 50, right: 50)),
-        Padding(
-            child: IntrinsicHeight(
-              child: Row(
-                children: const [],
-              ),
-            ),
-            padding: const EdgeInsets.only(left: 50, right: 50))
-      ])),
-      padding: const EdgeInsets.only(top: 30),
+
+  Widget conteudo(int currentSection) {
+    if (currentSection == 0){
+      return DoacoesPage(isLoading);
+    }else if (currentSection == 1){
+      return feedPedidos();
+    }else{
+      return perfil();
+    }
+  }
+
+  //Layout menu, mudanças de página
+  TextStyle getTextStyle(int currentSection, sectionID) {
+    if (currentSection == sectionID) {
+      return const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Color.fromRGBO(239, 50, 32, 1)
+      );
+    }
+
+    return const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: Colors.black
     );
   }
 
-  Widget conteudo(int currentSection) {
-    if (currentSection == 0) {
-      return sectionDoacao(isLoading);
-    }
-    if (currentSection == 1) {
-      return feedPedidos();
-    } else {
-      return perfil();
-    }
+
+  Widget DoacoesPage(bool isLoading){
+    return Container();
   }
 
   Widget pedido() {
@@ -203,7 +207,7 @@ class FeedState extends State<Feed> {
     return Column(children: [
       Padding(
           padding:
-              const EdgeInsets.only(left: 50, right: 50, top: 4, bottom: 0),
+          const EdgeInsets.only(left: 50, right: 50, top: 4, bottom: 0),
           child: Row(children: [
             const Text("Minhas Doações",
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -211,7 +215,7 @@ class FeedState extends State<Feed> {
           ])),
       Padding(
           padding:
-              const EdgeInsets.only(left: 50, right: 50, top: 0, bottom: 10),
+          const EdgeInsets.only(left: 50, right: 50, top: 0, bottom: 10),
           child: Container(
             height: 70,
             child: ListView(
@@ -219,6 +223,7 @@ class FeedState extends State<Feed> {
           ))
     ]);
   }
+
 
   adicionarDoacaoBotao() {
     return TextButton(
@@ -230,27 +235,29 @@ class FeedState extends State<Feed> {
               color: Color.fromRGBO(81, 181, 159, 1))),
       onPressed: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => AdicionarDoacao()));
-
-        setState(() {});
+            MaterialPageRoute(builder: (context) => AdicionarDoacao())).then((value) {
+          setState(() {
+            donationRequest = getDonations();
+          });
+        });
       },
     );
   }
 
   FutureBuilder showDoacoes() {
     return FutureBuilder(
-        future: f,
+        future: donationRequest,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.data != null) {
             List<Widget> widgets = [];
 
             List doacoes =
-                snapshot.data.map((c) => doacao.fromQuery(c)).toList();
+            snapshot.data.map((c) => doacao.fromQuery(c)).toList();
 
             for (var entry in doacoes) {
               widgets.add(doacaoBox(entry));
-              widgets.add(SizedBox(width: 15));
+              widgets.add(const SizedBox(width: 15));
             }
 
             return Row(children: widgets);
@@ -264,15 +271,29 @@ class FeedState extends State<Feed> {
   }
 
   Widget doacaoBox(doacao data) {
-    return Container(
-      width: 70,
-      height: 70,
-      child: Center(
-          child: Text(data.titulo.characters.first.toUpperCase(),
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-      color: Colors.grey,
-    );
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => mostrarDoacao(
+                      user: data.user,
+                      titulo: data.titulo,
+                      descricao: data.descricao,
+                      enderecoBairro: data.enderecoBairro,
+                      enderecoRua: data.enderecoRua,
+                      numero: data.numero,
+                      estado: data.estado)));
+        },
+        child: Container(
+          width: 70,
+          height: 70,
+          child: Center(
+              child: Text(data.titulo.characters.first.toUpperCase(),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold))),
+          color: Colors.grey,
+        ));
   }
 
   getUserData() async {
@@ -283,17 +304,10 @@ class FeedState extends State<Feed> {
       bio = prefs.getString("bio");
       email = prefs.getString("email");
       id = prefs.getInt("id");
-      isONG = prefs.getBool("isONG") == 1 ? true : false;
+      isONG = prefs.getBool("isONG");
     });
   }
 
-  Color getSectionColor(int currentSection, sectionID) {
-    if (currentSection == sectionID) {
-      return const Color.fromRGBO(239, 50, 32, 1);
-    }
-
-    return Colors.black;
-  }
 
   void renderPedidos() async {
     final prefs = await SharedPreferences.getInstance();

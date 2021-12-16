@@ -19,13 +19,13 @@ class dao {
 
     var database = await openDatabase(localBD, version: 1,
         onCreate: (db, dbVersaoRecente) {
-      var sql = '''
+          var sql = '''
         CREATE TABLE ${tablesName[0]} (id ${SqlTypes.idType}, nome ${SqlTypes.string}, email ${SqlTypes.string}, senha ${SqlTypes.string}, isONG INTEGER, bio ${SqlTypes.string});      
           ''';
 
-      db.execute(sql);
+          db.execute(sql);
 
-      sql = '''
+          sql = '''
         CREATE TABLE ${tablesName[1]} (
             ${TableDoacao.id} ${SqlTypes.idType}, 
             ${TableDoacao.user} INTEGER,
@@ -38,11 +38,11 @@ class dao {
             FOREIGN KEY(user) REFERENCES ${tablesName[0]}(id)  
             );
         ''';
-      db.execute(sql);
+          db.execute(sql);
 
-      db.execute(
-          "CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
-    });
+          db.execute(
+              "CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
+        });
 
     print("Is open: " + database.isOpen.toString());
 
@@ -116,4 +116,15 @@ class dao {
   }
 
   // Donatios
+  getDonationsById(int user) async {
+    Database db = await get_db();
+    var result = await db.query(
+        tablesName[1],
+        where: "user = ?",
+        whereArgs: [user],
+        columns: ["_id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero", "user"]
+    );
+
+    return result;
+  }
 }
