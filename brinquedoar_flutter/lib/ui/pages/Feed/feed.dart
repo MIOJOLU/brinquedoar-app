@@ -150,7 +150,7 @@ class FeedState extends State<Feed> {
   }
 
   //Layout menu, mudanças de página
-  TextStyle getTextStyle(int currentSection, sectionID) {
+  TextStyle getTextStyle(int currentSection , sectionID) {
     if (currentSection == sectionID) {
       return const TextStyle(
         fontSize: 14,
