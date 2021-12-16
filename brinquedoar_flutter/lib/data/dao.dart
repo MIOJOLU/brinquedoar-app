@@ -116,4 +116,15 @@ class dao {
   }
 
   // Donatios
+  getDonationsById(int user) async {
+    Database db = await get_db();
+    var result = await db.query(
+        tablesName[1],
+        where: "user = ?",
+        whereArgs: [user],
+        columns: ["_id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero", "user"]
+    );
+
+    return result;
+  }
 }

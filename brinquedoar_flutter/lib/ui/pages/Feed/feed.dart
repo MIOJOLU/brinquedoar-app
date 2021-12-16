@@ -49,20 +49,19 @@ class FeedState extends State<Feed> {
   bool? isONG = false;
 
   final dao brinquedoarRepository = dao();
+  final DoacaoService ds = DoacaoService();
+  late Future donationRequest;
 
-  late Future f;
-
-  @override
-  void initState() {
-    super.initState();
-
-    f = getDonations();
+  FeedState() {
+    donationRequest = getDonations();
   }
 
   getDonations() async {
     await getUserData();
 
-    return await DoacaoService.getDonationsById(id!);
+    List returnList = await brinquedoarRepository.getDonationsById(id!);
+
+    return returnList;
   }
 
   @override
@@ -230,16 +229,18 @@ class FeedState extends State<Feed> {
               color: Color.fromRGBO(81, 181, 159, 1))),
       onPressed: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => AdicionarDoacao()));
-
-        setState(() {});
+            MaterialPageRoute(builder: (context) => AdicionarDoacao())).then((value) {
+              setState(() {
+                donationRequest = getDonations();
+              });
+            });
       },
     );
   }
 
   FutureBuilder showDoacoes() {
     return FutureBuilder(
-        future: f,
+        future: donationRequest,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.data != null) {
@@ -250,7 +251,7 @@ class FeedState extends State<Feed> {
 
             for (var entry in doacoes) {
               widgets.add(doacaoBox(entry));
-              widgets.add(SizedBox(width: 15));
+              widgets.add(const SizedBox(width: 15));
             }
 
             return Row(children: widgets);
@@ -264,15 +265,29 @@ class FeedState extends State<Feed> {
   }
 
   Widget doacaoBox(doacao data) {
-    return Container(
-      width: 70,
-      height: 70,
-      child: Center(
-          child: Text(data.titulo.characters.first.toUpperCase(),
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-      color: Colors.grey,
-    );
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => mostrarDoacao(
+                      user: data.user,
+                      titulo: data.titulo,
+                      descricao: data.descricao,
+                      enderecoBairro: data.enderecoBairro,
+                      enderecoRua: data.enderecoRua,
+                      numero: data.numero,
+                      estado: data.estado)));
+        },
+        child: Container(
+          width: 70,
+          height: 70,
+          child: Center(
+              child: Text(data.titulo.characters.first.toUpperCase(),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold))),
+          color: Colors.grey,
+        ));
   }
 
   getUserData() async {
