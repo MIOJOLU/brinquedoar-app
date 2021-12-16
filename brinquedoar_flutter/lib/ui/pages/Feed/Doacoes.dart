@@ -7,22 +7,87 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Widget sectionDoacao(bool isLoading) {
   late List<doacao> doacoes;
-  bool isLoading = false; 
-  return Scaffold(
-    body: Center(
-      /*child: isLoading
-          ? const CircularProgressIndicator()
-          : doacao.
-              ? Text(
-                  'No Notes',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                )
-              : buildNotes(),*/
-    ),
+  bool isLoading = false;
+  return Column(
+    children: <Widget>[
+      Row(
+        children: <Widget>[
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: Container(
+              height: 175,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.red,
+              ), //BoxDecoration
+            ), //Container
+          ), //Flexible
+          SizedBox(
+            width: 20,
+          ), //SizedBox
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Container(
+                height: 175,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.red,
+                ) //BoxDecoration
+            ), //Container
+          ) //Flexible
+        ], //<Widget>[]
+        mainAxisAlignment: MainAxisAlignment.center,
+      ), //Row
+      Flexible(
+        flex: 1,
+        fit: FlexFit.loose,
+        child: Container(
+          width: 380,
+          height: 200,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.blue), //BoxDecoration
+        ), //Container
+      ), //Flexible
+      Row(
+        children: <Widget>[
+          Flexible(
+            flex: 2,
+            fit: FlexFit.tight,
+            child: Container(
+              width: 180,
+              height: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.cyan,
+              ), //BoxDecoration
+            ), //Container
+          ), //Flexible
+          SizedBox(
+            width: 20,
+          ), //SixedBox
+          Flexible(
+              flex: 2,
+              fit: FlexFit.tight,
+              child: Container(
+                  width: 180,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.cyan,
+                  ) //BoxDecoration
+              ) //Container,
+          ) //Flexible
+        ], //<widget>[]
+        mainAxisAlignment: MainAxisAlignment.center,
+      ), //Row
+    ], //<Widget>[]
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.center,
   );
 }
-
-
 
 Future refreshDoacoes() async {
   //isLoading = true;
