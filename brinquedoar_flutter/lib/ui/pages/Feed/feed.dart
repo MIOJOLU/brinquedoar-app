@@ -298,7 +298,7 @@ class FeedState extends State<Feed> {
       bio = prefs.getString("bio");
       email = prefs.getString("email");
       id = prefs.getInt("id");
-      isONG = prefs.getBool("isONG") == 1 ? true : false;
+      isONG = prefs.getBool("isONG");
     });
   }
 

@@ -55,7 +55,7 @@ class _cadastro extends State<cadastro> {
       await prefs.setString("nome", nome);
       await prefs.setString("email", email);
       await prefs.setInt("id", await brinquedoarRepository.insertUser(newUser.toJson()));
-      await prefs.setInt("isONG", isONG == true? 1 : 0);
+      await prefs.setBool("isONG", isONG);
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const Feed()));
