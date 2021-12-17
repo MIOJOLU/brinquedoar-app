@@ -1,5 +1,5 @@
 // ignore_for_file: file_names
-
+import 'dart:math' as math;
 import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:brinquedoar_flutter/model/doacao.dart';
 import 'package:brinquedoar_flutter/ui/pages/Feed/feed.dart';
@@ -94,11 +94,7 @@ class mostrarDoacaoState extends State<mostrarDoacao> {
               child: Text("Descrição da Doação",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             ),
-            Image(
-              image: NetworkImage(currentDonation.url_imagem),
-              width: 200,
-              height: 200,
-            ),
+            imageOrIcon(),
             Padding(
               padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 4),
               child: Text(
@@ -157,6 +153,28 @@ class mostrarDoacaoState extends State<mostrarDoacao> {
     }
 
     return const Text("");
+  }
+
+  Widget imageOrIcon() {
+    if (Uri.parse(currentDonation.url_imagem).isAbsolute){
+      return Image(
+        image: NetworkImage(currentDonation.url_imagem),
+        width: 200,
+        height: 200,
+      );
+    }
+     return Container(
+        width: 200,
+        height: 200,
+        child: Center(
+          child: Text(
+            currentDonation.titulo.characters.first.toUpperCase(),
+            style:
+            const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+      );
   }
 
 // void updateDonationData() async {

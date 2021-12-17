@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math' as math;
 
 import 'package:brinquedoar_flutter/data/dao.dart';
 import 'package:brinquedoar_flutter/model/doacao.dart';
@@ -16,6 +17,7 @@ class Feed extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => FeedState();
 }
+
 late List<doacao> doacoes;
 bool isLoading = false;
 
@@ -38,6 +40,8 @@ class FeedState extends State<Feed> {
   final DoacaoService ds = DoacaoService();
   late Future donationRequest;
   late Future allDonationsRequest;
+
+  
 
   FeedState() {
     donationRequest = getDonations();
@@ -66,16 +70,19 @@ class FeedState extends State<Feed> {
       body: Container(
         child: Column(
           children: [
-            Padding(padding: EdgeInsets.all(25),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [Expanded(
+            Padding(
+              padding: EdgeInsets.all(25),
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Expanded(
                   flex: 2,
-                  child: Image.asset('assets/images/logo-colorida.png', width: 120, height: 79),
-                )]
-            ),),
+                  child: Image.asset('assets/images/logo-colorida.png',
+                      width: 120, height: 79),
+                )
+              ]),
+            ),
             Row(
-              children:  [
+              children: [
                 Expanded(
                   child: GestureDetector(
                       child: Text(
@@ -84,41 +91,32 @@ class FeedState extends State<Feed> {
                         textAlign: TextAlign.center,
                       ),
                       onTap: () => {
-                        setState(() {
-                          currentSection = 0;
-                        })
-                      }),
+                            setState(() {
+                              currentSection = 0;
+                            })
+                          }),
                   flex: 1,
-
                 ),
                 Expanded(
                     child: GestureDetector(
-                        child: Text("perfil",
-                            style: getTextStyle(currentSection, 2),
-                            textAlign: TextAlign.center,
+                        child: Text(
+                          "perfil",
+                          style: getTextStyle(currentSection, 2),
+                          textAlign: TextAlign.center,
                         ),
                         onTap: () => {
-                          setState(() {
-                            currentSection = 2;
-                          })
-                        }),
-                    flex: 1
-                ),
+                              setState(() {
+                                currentSection = 2;
+                              })
+                            }),
+                    flex: 1),
               ],
             ),
-
-
             Padding(
               padding: EdgeInsets.all(20),
-              child:
-                Row(
-                  children: [
-                    Expanded(
-                        child: conteudo(currentSection)
-                    )
-                  ],
-                )
-              ,
+              child: Row(
+                children: [Expanded(child: conteudo(currentSection))],
+              ),
             )
           ],
         ),
@@ -133,49 +131,45 @@ class FeedState extends State<Feed> {
     ]);
   }
 
-
   Widget conteudo(int currentSection) {
-    if (currentSection == 0){
+    if (currentSection == 0) {
       return DoacoesPage(isLoading);
-    }else{
+    } else {
       return perfil();
     }
   }
 
   //Layout menu, mudanças de página
-  TextStyle getTextStyle(int currentSection , sectionID) {
+  TextStyle getTextStyle(int currentSection, sectionID) {
     if (currentSection == sectionID) {
       return const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: Color.fromRGBO(239, 50, 32, 1)
-      );
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Color.fromRGBO(239, 50, 32, 1));
     }
 
     return const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: Colors.black
-    );
+        fontSize: 14, fontWeight: FontWeight.normal, color: Colors.black);
   }
 
-
-  FutureBuilder DoacoesPage(bool isLoading){
+  FutureBuilder DoacoesPage(bool isLoading) {
     return FutureBuilder(
         future: allDonationsRequest,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
             List<Widget> widgets = [];
 
             List doacoes =
-            snapshot.data.map((c) => doacao.fromQuery(c)).toList();
+                snapshot.data.map((c) => doacao.fromQuery(c)).toList();
 
             for (var entry in doacoes) {
-              widgets.add(doacaoBox(entry));
-              widgets.add(const SizedBox(width: 15));
+              widgets.add(Padding(
+                padding: EdgeInsets.all(8),
+                  child: doacaoBox(entry)));
             }
 
-            return Row(children: widgets);
+            return Wrap(children: widgets);
           } else if (snapshot.hasError) {
             print("ERROR");
           } else {
@@ -220,16 +214,16 @@ class FeedState extends State<Feed> {
   abaDoacoes() {
     return Column(children: [
       Padding(
-          padding:
-          const EdgeInsets.only(left: 100, top: 4, bottom: 0),
-          child: Row(children: [
+          padding: const EdgeInsets.only(left: 0, top: 4, bottom: 0),
+          child: Row(
+              children: [
             const Text("Minhas Doações",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             adicionarDoacaoBotao()
           ])),
       Padding(
           padding:
-          const EdgeInsets.only(left: 50, right: 50, top: 0, bottom: 10),
+              const EdgeInsets.only(left: 50, right: 50, top: 0, bottom: 10),
           child: Container(
             height: 70,
             child: ListView(
@@ -237,7 +231,6 @@ class FeedState extends State<Feed> {
           ))
     ]);
   }
-
 
   adicionarDoacaoBotao() {
     return TextButton(
@@ -249,7 +242,8 @@ class FeedState extends State<Feed> {
               color: Color.fromRGBO(81, 181, 159, 1))),
       onPressed: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => AdicionarDoacao())).then((value) {
+                MaterialPageRoute(builder: (context) => AdicionarDoacao()))
+            .then((value) {
           setState(() {
             donationRequest = getDonations();
           });
@@ -267,14 +261,16 @@ class FeedState extends State<Feed> {
             List<Widget> widgets = [];
 
             List doacoes =
-            snapshot.data.map((c) => doacao.fromQuery(c)).toList();
+                snapshot.data.map((c) => doacao.fromQuery(c)).toList();
 
             for (var entry in doacoes) {
               widgets.add(doacaoBox(entry));
               widgets.add(const SizedBox(width: 15));
             }
 
-            return Row(children: widgets);
+            return Row(
+              children: widgets,
+            );
           } else if (snapshot.hasError) {
             print("ERROR");
           } else {
@@ -284,13 +280,48 @@ class FeedState extends State<Feed> {
         });
   }
 
-  Widget doacaoBox(doacao data) {
+  Widget doacaoCard(doacao data) {
     return GestureDetector(
         onTap: () {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => mostrarDoacao(
+                        user: data.user,
+                        titulo: data.titulo,
+                        descricao: data.descricao,
+                        enderecoBairro: data.enderecoBairro,
+                        enderecoRua: data.enderecoRua,
+                        numero: data.numero,
+                        estado: data.estado,
+                        url_imagem: data.url_imagem,
+                        idDoacao: data.id,
+                      ))).then((value) {
+            setState(() {
+              donationRequest = getDonations();
+            });
+          });
+        },
+        child: Container(
+          width: 70,
+          height: 70,
+          child: Center(
+              child: Image(
+            image: NetworkImage(data.url_imagem),
+          )),
+          color: Colors.grey,
+        ));
+  }
+
+  Widget doacaoBox(doacao data) {
+    if(Uri.parse(data.url_imagem).isAbsolute){
+
+      return GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => mostrarDoacao(
                       user: data.user,
                       titulo: data.titulo,
                       descricao: data.descricao,
@@ -299,22 +330,54 @@ class FeedState extends State<Feed> {
                       numero: data.numero,
                       estado: data.estado,
                       url_imagem: data.url_imagem,
-                    idDoacao: data.id,
-                  ))).then((value) {
-                    setState(() {
-                      donationRequest = getDonations();
-                    });
+                      idDoacao: data.id,
+                    ))).then((value) {
+              setState(() {
+                donationRequest = getDonations();
+              });
+            });
+          },
+          child: Container(
+            width: 70,
+            height: 70,
+            child: Image(
+              image: NetworkImage(data.url_imagem),
+            ),
+            color: Colors.grey,
+          ));
+    }
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => mostrarDoacao(
+                        user: data.user,
+                        titulo: data.titulo,
+                        descricao: data.descricao,
+                        enderecoBairro: data.enderecoBairro,
+                        enderecoRua: data.enderecoRua,
+                        numero: data.numero,
+                        estado: data.estado,
+                        url_imagem: data.url_imagem,
+                        idDoacao: data.id,
+                      ))).then((value) {
+            setState(() {
+              donationRequest = getDonations();
+            });
           });
         },
         child: Container(
           width: 70,
           height: 70,
           child: Center(
-              child: Image(
-                image: NetworkImage(data.url_imagem),
-              )
+            child: Text(
+              data.titulo.characters.first.toUpperCase(),
+                style:
+                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
-          color: Colors.grey,
+          color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
         ));
   }
 
@@ -328,7 +391,6 @@ class FeedState extends State<Feed> {
       isONG = prefs.getBool("isONG");
     });
   }
-
 
   void renderPedidos() async {
     final prefs = await SharedPreferences.getInstance();
