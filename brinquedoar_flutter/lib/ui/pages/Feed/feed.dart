@@ -377,7 +377,7 @@ class FeedState extends State<Feed> {
                 const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
+          color: Colors.grey,
         ));
   }
 
