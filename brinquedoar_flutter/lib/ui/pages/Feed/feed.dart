@@ -41,8 +41,6 @@ class FeedState extends State<Feed> {
   late Future donationRequest;
   late Future allDonationsRequest;
 
-  
-
   FeedState() {
     donationRequest = getDonations();
     allDonationsRequest = getAllDonations();
@@ -164,9 +162,8 @@ class FeedState extends State<Feed> {
                 snapshot.data.map((c) => doacao.fromQuery(c)).toList();
 
             for (var entry in doacoes) {
-              widgets.add(Padding(
-                padding: EdgeInsets.all(8),
-                  child: doacaoBox(entry)));
+              widgets.add(
+                  Padding(padding: EdgeInsets.all(8), child: doacaoBox(entry)));
             }
 
             return Wrap(children: widgets);
@@ -215,8 +212,7 @@ class FeedState extends State<Feed> {
     return Column(children: [
       Padding(
           padding: const EdgeInsets.only(left: 0, top: 4, bottom: 0),
-          child: Row(
-              children: [
+          child: Row(children: [
             const Text("Minhas Doações",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             adicionarDoacaoBotao()
@@ -228,7 +224,21 @@ class FeedState extends State<Feed> {
             height: 70,
             child: ListView(
                 scrollDirection: Axis.horizontal, children: [showDoacoes()]),
-          ))
+          )),
+      TextButton(
+        style: TextButton.styleFrom(padding: const EdgeInsets.all(0)),
+        child: const Text('Sair',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Color.fromRGBO(81, 181, 159, 1))),
+        onPressed: () {
+          Navigator.pop(context, MaterialPageRoute(builder: (context) => const Feed()));
+
+          clearUserData();
+
+        },
+      )
     ]);
   }
 
@@ -314,24 +324,22 @@ class FeedState extends State<Feed> {
   }
 
   Widget doacaoBox(doacao data) {
-    if(Uri.parse(data.url_imagem).isAbsolute){
-
       return GestureDetector(
           onTap: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => mostrarDoacao(
-                      user: data.user,
-                      titulo: data.titulo,
-                      descricao: data.descricao,
-                      enderecoBairro: data.enderecoBairro,
-                      enderecoRua: data.enderecoRua,
-                      numero: data.numero,
-                      estado: data.estado,
-                      url_imagem: data.url_imagem,
-                      idDoacao: data.id,
-                    ))).then((value) {
+                          user: data.user,
+                          titulo: data.titulo,
+                          descricao: data.descricao,
+                          enderecoBairro: data.enderecoBairro,
+                          enderecoRua: data.enderecoRua,
+                          numero: data.numero,
+                          estado: data.estado,
+                          url_imagem: data.url_imagem,
+                          idDoacao: data.id,
+                        ))).then((value) {
               setState(() {
                 donationRequest = getDonations();
               });
@@ -340,45 +348,19 @@ class FeedState extends State<Feed> {
           child: Container(
             width: 70,
             height: 70,
-            child: Image(
-              image: NetworkImage(data.url_imagem),
-            ),
+            child: Center(
+                child: imageOrIcon(data)),
             color: Colors.grey,
           ));
-    }
-    return GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => mostrarDoacao(
-                        user: data.user,
-                        titulo: data.titulo,
-                        descricao: data.descricao,
-                        enderecoBairro: data.enderecoBairro,
-                        enderecoRua: data.enderecoRua,
-                        numero: data.numero,
-                        estado: data.estado,
-                        url_imagem: data.url_imagem,
-                        idDoacao: data.id,
-                      ))).then((value) {
-            setState(() {
-              donationRequest = getDonations();
-            });
-          });
-        },
-        child: Container(
-          width: 70,
-          height: 70,
-          child: Center(
-            child: Text(
-              data.titulo.characters.first.toUpperCase(),
-                style:
-                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          color: Colors.grey,
-        ));
+  }
+
+  clearUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("nome", "");
+    prefs.setString("email", "");
+    prefs.setInt("id", -1);
+    prefs.setBool("isONG", false);
   }
 
   getUserData() async {
@@ -444,6 +426,19 @@ class FeedState extends State<Feed> {
           ),
         ],
       ),
+    );
+  }
+
+  imageOrIcon(doacao data) {
+    if(Uri.parse(data.url_imagem).isAbsolute) {
+      return Image(
+        image: NetworkImage(data.url_imagem),
+      );
+    }
+
+    return Text(
+      data.titulo.characters.first.toUpperCase(),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     );
   }
 }
