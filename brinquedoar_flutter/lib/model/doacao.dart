@@ -8,6 +8,7 @@ class TableDoacao {
   static String enderecoBairro = 'enderecoBairro';
   static String estado = 'estado';
   static String numero = 'numero';
+  static String url_imagem = 'url_imagem';
 }
 
 class doacao{
@@ -19,6 +20,7 @@ class doacao{
   String estado = "";
   int user = -1;
   int id = -1;
+  String url_imagem = "";
 
   doacao({
     required this.user,
@@ -27,7 +29,20 @@ class doacao{
     required this.enderecoRua,
     required this.enderecoBairro,
     required this.estado,
-    required this.numero
+    required this.numero,
+    required this.url_imagem
+  });
+
+  doacao.withId({
+    required this.id,
+    required this.user,
+    required this.titulo,
+    required this.descricao,
+    required this.enderecoRua,
+    required this.enderecoBairro,
+    required this.estado,
+    required this.numero,
+    required this.url_imagem
   });
 
   //doacao(this.user, this.titulo, this.descricao, this.enderecoRua, this.enderecoBairro, this.estado, this.numero);
@@ -39,6 +54,7 @@ class doacao{
     enderecoBairro = query["enderecoBairro"];
     numero = int.parse(query["numero"]);
     estado = query["estado"];
+    url_imagem = query["url_imagem"];
     user = int.parse(query["user"].toString());
     id = int.parse(query["_id"].toString());
   }
@@ -50,7 +66,8 @@ class doacao{
     TableDoacao.enderecoRua: enderecoRua,
     TableDoacao.enderecoBairro: enderecoBairro,
     TableDoacao.numero: numero,
-    TableDoacao.estado: estado
+    TableDoacao.estado: estado,
+    TableDoacao.url_imagem: url_imagem
   };
 
   Map<String, Object> toJSONobj() => {

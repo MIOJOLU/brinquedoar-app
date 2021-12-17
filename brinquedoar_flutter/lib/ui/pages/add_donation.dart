@@ -28,6 +28,7 @@ class _donationState extends State<AdicionarDoacao> {
   final TextEditingController _enderecoBairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
   final TextEditingController _estadoController = TextEditingController();
+  final TextEditingController _url_imagemController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +176,26 @@ class _donationState extends State<AdicionarDoacao> {
                                   ),
                                 ),
                               )),
+                          Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: TextFormField(
+                                controller: _url_imagemController,
+                                keyboardType: TextInputType.text,
+                                decoration: const InputDecoration(
+                                  labelText: " Imagem (URL)",
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromRGBO(81, 181, 159, 1),
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30)),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30)),
+                                  ),
+                                ),
+                              )),
                           ElevatedButton(
                             onPressed: () {
                               _adicionarDoacao(_tituloController.text,
@@ -182,7 +203,9 @@ class _donationState extends State<AdicionarDoacao> {
                                   _enderecoRuaController.text,
                                   _enderecoBairroController.text,
                                   _estadoController.text,
-                                  int.parse(_numeroController.text));
+                                  int.parse(_numeroController.text),
+                                  _url_imagemController.text
+                              );
                               Navigator.pop(
                                   context, MaterialPageRoute(builder: (
                                   context) => Feed()));
@@ -201,7 +224,7 @@ class _donationState extends State<AdicionarDoacao> {
   }
 
   static _adicionarDoacao(String titulo, String descricao, String rua,
-      String bairro, String estado, int numero) async {
+      String bairro, String estado, int numero, String url_imagem) async {
     final prefs = await SharedPreferences.getInstance();
     int? user = prefs.getInt("id");
     doacao donation = doacao(user: user!,
@@ -210,9 +233,11 @@ class _donationState extends State<AdicionarDoacao> {
         enderecoRua: rua,
         enderecoBairro: bairro,
         estado: estado,
-        numero: numero);
+        numero: numero,
+        url_imagem: url_imagem
+    );
     int id = await DoacaoService.insertDonations(donation);
-    print(id);
+    //print(id);
   }
 
   logo() {

@@ -48,7 +48,7 @@ class _cadastro extends State<cadastro> {
 
   _cadastrarUsuario(String nome, String email, String password, String confirmPassword, bool isONG) async {
     if(password == confirmPassword){
-      User newUser = User(nome, email, password, isONG, "");
+      User newUser = User(nome, email, password, isONG);
 
       final prefs = await SharedPreferences.getInstance();
 

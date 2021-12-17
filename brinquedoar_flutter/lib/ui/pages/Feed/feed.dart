@@ -7,6 +7,7 @@ import 'package:brinquedoar_flutter/ui/pages/Feed/Doacoes.dart';
 import 'package:brinquedoar_flutter/ui/pages/add_donation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Feed extends StatefulWidget {
@@ -30,22 +31,31 @@ class FeedState extends State<Feed> {
   var currentSection = 0;
   String? nome = "";
   String? email = "";
-  String? bio = "";
   int? id = -1;
   bool? isONG = false;
 
   final dao brinquedoarRepository = dao();
   final DoacaoService ds = DoacaoService();
   late Future donationRequest;
+  late Future allDonationsRequest;
 
   FeedState() {
     donationRequest = getDonations();
+    allDonationsRequest = getAllDonations();
   }
 
   getDonations() async {
     await getUserData();
 
     List returnList = await brinquedoarRepository.getDonationsById(id!);
+
+    return returnList;
+  }
+
+  getAllDonations() async {
+    await getUserData();
+
+    List returnList = await brinquedoarRepository.getAllDonations(id);
 
     return returnList;
   }
@@ -80,21 +90,6 @@ class FeedState extends State<Feed> {
                       }),
                   flex: 1,
 
-                ),
-                Expanded(
-                    child: GestureDetector(
-                      child: Text("pedidos",
-                          style: getTextStyle(currentSection, 1),
-                          textAlign: TextAlign.center,
-                      ),
-
-                      onTap: () => {
-                        setState(() {
-                          currentSection = 1;
-                        })
-                      },
-                    ),
-                    flex: 1
                 ),
                 Expanded(
                     child: GestureDetector(
@@ -142,8 +137,6 @@ class FeedState extends State<Feed> {
   Widget conteudo(int currentSection) {
     if (currentSection == 0){
       return DoacoesPage(isLoading);
-    }else if (currentSection == 1){
-      return feedPedidos();
     }else{
       return perfil();
     }
@@ -167,8 +160,29 @@ class FeedState extends State<Feed> {
   }
 
 
-  Widget DoacoesPage(bool isLoading){
-    return Container();
+  FutureBuilder DoacoesPage(bool isLoading){
+    return FutureBuilder(
+        future: allDonationsRequest,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+            List<Widget> widgets = [];
+
+            List doacoes =
+            snapshot.data.map((c) => doacao.fromQuery(c)).toList();
+
+            for (var entry in doacoes) {
+              widgets.add(doacaoBox(entry));
+              widgets.add(const SizedBox(width: 15));
+            }
+
+            return Row(children: widgets);
+          } else if (snapshot.hasError) {
+            print("ERROR");
+          } else {
+            return const CircularProgressIndicator();
+          }
+          return const Text("");
+        });
   }
 
   Widget pedido() {
@@ -200,14 +214,14 @@ class FeedState extends State<Feed> {
   infoUsuario() {
     getUserData();
 
-    return Column(children: [Text(nome!), Text(bio!)]);
+    return Column(children: [Text(nome!)]);
   }
 
   abaDoacoes() {
     return Column(children: [
       Padding(
           padding:
-          const EdgeInsets.only(left: 50, right: 50, top: 4, bottom: 0),
+          const EdgeInsets.only(left: 100, top: 4, bottom: 0),
           child: Row(children: [
             const Text("Minhas Doações",
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -283,15 +297,23 @@ class FeedState extends State<Feed> {
                       enderecoBairro: data.enderecoBairro,
                       enderecoRua: data.enderecoRua,
                       numero: data.numero,
-                      estado: data.estado)));
+                      estado: data.estado,
+                      url_imagem: data.url_imagem,
+                    idDoacao: data.id,
+                  ))).then((value) {
+                    setState(() {
+                      donationRequest = getDonations();
+                    });
+          });
         },
         child: Container(
           width: 70,
           height: 70,
           child: Center(
-              child: Text(data.titulo.characters.first.toUpperCase(),
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold))),
+              child: Image(
+                image: NetworkImage(data.url_imagem),
+              )
+          ),
           color: Colors.grey,
         ));
   }
@@ -301,7 +323,6 @@ class FeedState extends State<Feed> {
 
     setState(() {
       nome = prefs.getString("nome");
-      bio = prefs.getString("bio");
       email = prefs.getString("email");
       id = prefs.getInt("id");
       isONG = prefs.getBool("isONG");

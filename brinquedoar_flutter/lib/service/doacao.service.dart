@@ -20,7 +20,8 @@ class DoacaoService {
       "enderecoRua",
       "enderecoBairro",
       "estado",
-      "numero"
+      "numero",
+      "url_imagem"
     ]);
   }
   // updateDonation(doacao newDonation) async {

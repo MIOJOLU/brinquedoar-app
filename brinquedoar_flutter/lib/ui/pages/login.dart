@@ -46,7 +46,6 @@ class _login extends State<login> {
 
       await prefs.setString("nome", user.nome!);
       await prefs.setString("email", user.email!);
-      await prefs.setString("bio", user.bio == null? "" : user.bio!);
       await prefs.setInt("id", user.id!);
       await prefs.setBool("isONG", user.isONG!);
 

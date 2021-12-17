@@ -19,13 +19,13 @@ class dao {
 
     var database = await openDatabase(localBD, version: 1,
         onCreate: (db, dbVersaoRecente) {
-          var sql = '''
-        CREATE TABLE ${tablesName[0]} (id ${SqlTypes.idType}, nome ${SqlTypes.string}, email ${SqlTypes.string}, senha ${SqlTypes.string}, isONG INTEGER, bio ${SqlTypes.string});      
+      var sql = '''
+        CREATE TABLE ${tablesName[0]} (id ${SqlTypes.idType}, nome ${SqlTypes.string}, email ${SqlTypes.string}, senha ${SqlTypes.string}, isONG INTEGER);      
           ''';
 
-          db.execute(sql);
+      db.execute(sql);
 
-          sql = '''
+      sql = '''
         CREATE TABLE ${tablesName[1]} (
             ${TableDoacao.id} ${SqlTypes.idType}, 
             ${TableDoacao.user} INTEGER,
@@ -35,14 +35,15 @@ class dao {
             ${TableDoacao.enderecoBairro} ${SqlTypes.string},
             ${TableDoacao.numero} ${SqlTypes.string},
             ${TableDoacao.estado} ${SqlTypes.string},
+            ${TableDoacao.url_imagem} ${SqlTypes.string},
             FOREIGN KEY(user) REFERENCES ${tablesName[0]}(id)  
             );
         ''';
-          db.execute(sql);
+      db.execute(sql);
 
-          db.execute(
-              "CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
-        });
+      db.execute(
+          "CREATE TABLE pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, id_user INTEGER NOT NULL, status VARCHAR, descricao VARCHAR, FOREIGN KEY (id_user) REFERENCES user (id));");
+    });
 
     print("Is open: " + database.isOpen.toString());
 
@@ -118,12 +119,65 @@ class dao {
   // Donatios
   getDonationsById(int user) async {
     Database db = await get_db();
-    var result = await db.query(
-        tablesName[1],
-        where: "user = ?",
-        whereArgs: [user],
-        columns: ["_id", "titulo","descricao", "enderecoRua", "enderecoBairro", "estado", "numero", "user"]
-    );
+    var result = await db.query(tablesName[1], where: "user = ?", whereArgs: [
+      user
+    ], columns: [
+      "_id",
+      "titulo",
+      "descricao",
+      "enderecoRua",
+      "enderecoBairro",
+      "estado",
+      "numero",
+      "user",
+      "url_imagem"
+    ]);
+
+    return result;
+  }
+
+  getAllDonations(int? id) async{
+    Database db = await get_db();
+    var result;
+
+    if (id != null) {
+      result = await db.query(tablesName[1], where: "user != ?", whereArgs: [
+        id
+      ], columns: [
+        "_id",
+        "titulo",
+        "descricao",
+        "enderecoRua",
+        "enderecoBairro",
+        "estado",
+        "numero",
+        "user",
+        "url_imagem"
+      ]);
+    }
+    else{
+      result = await db.query(tablesName[1], columns: [
+        "_id",
+        "titulo",
+        "descricao",
+        "enderecoRua",
+        "enderecoBairro",
+        "estado",
+        "numero",
+        "user",
+        "url_imagem"
+      ]);
+    }
+
+    return result;
+  }
+
+  deleteDonation(int id) async{
+    Database db = await get_db();
+
+    print(id);
+
+    var result = await db.delete(tablesName[1], where: "_id = ?", whereArgs: [id]);
 
     return result;
   }
