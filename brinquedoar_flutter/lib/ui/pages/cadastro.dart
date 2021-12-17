@@ -1,7 +1,8 @@
 import 'package:brinquedoar_flutter/data/dao.dart';
+import 'package:brinquedoar_flutter/model/user.dart';
 import 'package:brinquedoar_flutter/ui/pages/home.dart';
 import 'package:brinquedoar_flutter/ui/pages/login.dart';
-import 'package:brinquedoar_flutter/ui/pages/feed.dart';
+import 'package:brinquedoar_flutter/ui/pages/Feed/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,22 +48,17 @@ class _cadastro extends State<cadastro> {
 
   _cadastrarUsuario(String nome, String email, String password, String confirmPassword, bool isONG) async {
     if(password == confirmPassword){
-      Map<String, dynamic> userData = {
-        "nome": nome,
-        "email": email,
-        "senha": password,
-        "isONG": isONG == true? 1 : 0
-      };
+      User newUser = User(nome, email, password, isONG);
 
       final prefs = await SharedPreferences.getInstance();
 
       await prefs.setString("nome", nome);
       await prefs.setString("email", email);
-      await prefs.setInt("id", await brinquedoarRepository.insertUser(userData));
-      await prefs.setInt("isONG", isONG == true? 1 : 0);
+      await prefs.setInt("id", await brinquedoarRepository.insertUser(newUser.toJson()));
+      await prefs.setBool("isONG", isONG);
 
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Feed()));
+          MaterialPageRoute(builder: (context) => const Feed()));
     }
     else {
       _limparDados();

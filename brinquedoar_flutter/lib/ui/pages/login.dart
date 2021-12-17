@@ -1,7 +1,8 @@
 import 'package:brinquedoar_flutter/data/dao.dart';
+import 'package:brinquedoar_flutter/model/user.dart';
 import 'package:brinquedoar_flutter/ui/pages/home.dart';
 import 'package:brinquedoar_flutter/ui/pages/cadastro.dart';
-import 'package:brinquedoar_flutter/ui/pages/feed.dart';
+import 'package:brinquedoar_flutter/ui/pages/Feed/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,15 +39,15 @@ class _login extends State<login> {
   final dao brinquedoarRepository = dao();
 
   void logarUsuario(String email, String password) async {
-    var user = await dao.getUserByEmail(email);
+    User user = await brinquedoarRepository.getUserByEmail(email);
 
-    if(user["senha"] == password){
+    if(user.senha == password){
       final prefs = await SharedPreferences.getInstance();
 
-      await prefs.setString("nome", user["nome"]);
-      await prefs.setString("email", user["email"]);
-      await prefs.setInt("id", user["id"]);
-      await prefs.setInt("isONG", user["isONG"]);
+      await prefs.setString("nome", user.nome!);
+      await prefs.setString("email", user.email!);
+      await prefs.setInt("id", user.id!);
+      await prefs.setBool("isONG", user.isONG!);
 
       Navigator.push(context, MaterialPageRoute(builder: (context) => Feed()));
     }
